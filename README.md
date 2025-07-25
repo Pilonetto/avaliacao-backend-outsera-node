@@ -71,7 +71,7 @@ npm run start:dev
 A aplicação estará disponível em:
 
 ```
-http://localhost:8000
+http://localhost:3000
 ```
 
 ### 4. Documentação Swagger
@@ -79,7 +79,7 @@ http://localhost:8000
 Acesse a documentação interativa da API:
 
 ```
-http://localhost:8000/docs
+http://localhost:3000/docs
 ```
 
 ---

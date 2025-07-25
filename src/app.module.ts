@@ -7,7 +7,7 @@ import { Movie } from './awards/entities/movie.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'database.db',
+      database: ':memory:',
       entities: [Movie],
       synchronize: true,
     }),

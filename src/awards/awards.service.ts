@@ -19,12 +19,25 @@ export class AwardsService implements OnModuleInit {
     }
   }
 
-  async getAwardIntervals() {
+  async getAwardIntervals(): Promise<{
+    min: {
+      producer: string;
+      interval: number;
+      previousWin: number;
+      followingWin: number;
+    }[];
+    max: {
+      producer: string;
+      interval: number;
+      previousWin: number;
+      followingWin: number;
+    }[];
+  }> {
     const winners = await this.movieRepo.find({ where: { winner: true } });
     const map = new Map<string, number[]>();
 
     winners.forEach((movie) => {
-      const producers = movie.producers.replace(' and ', ',').split(',');
+      const producers = movie.producers.replace(/ and /g, ',').split(',');
       producers.forEach((raw) => {
         const name = raw.trim();
         if (!map.has(name)) map.set(name, []);
@@ -32,7 +45,7 @@ export class AwardsService implements OnModuleInit {
       });
     });
 
-    const result: {
+    const intervals: {
       producer: string;
       interval: number;
       previousWin: number;
@@ -43,7 +56,7 @@ export class AwardsService implements OnModuleInit {
       if (years.length < 2) continue;
       const sorted = years.sort((a, b) => a - b);
       for (let i = 1; i < sorted.length; i++) {
-        result.push({
+        intervals.push({
           producer,
           interval: sorted[i] - sorted[i - 1],
           previousWin: sorted[i - 1],
@@ -52,14 +65,14 @@ export class AwardsService implements OnModuleInit {
       }
     }
 
-    if (result.length === 0) return { min: [], max: [] };
+    if (intervals.length === 0) return { min: [], max: [] };
 
-    const min = Math.min(...result.map((r) => r.interval));
-    const max = Math.max(...result.map((r) => r.interval));
+    const minInterval = Math.min(...intervals.map((i) => i.interval));
+    const maxInterval = Math.max(...intervals.map((i) => i.interval));
 
     return {
-      min: result.filter((r) => r.interval === min),
-      max: result.filter((r) => r.interval === max),
+      min: intervals.filter((i) => i.interval === minInterval),
+      max: intervals.filter((i) => i.interval === maxInterval),
     };
   }
 }
